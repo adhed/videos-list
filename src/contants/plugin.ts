@@ -1,0 +1,1 @@
+export const PLUGIN_DATA_MSG: string = 'VIDEOS_LIST_PLUGIN_DATA';

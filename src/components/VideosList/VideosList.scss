@@ -1,0 +1,16 @@
+.video_list__list {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.video_list__element {
+    list-style-type: square;
+    list-style-position: inside;
+    padding: 0.125rem;
+
+    &:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
+}
