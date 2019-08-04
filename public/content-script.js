@@ -1,6 +1,7 @@
 const VIDEO_CONTAINER_SELECTOR  = '.ytd-grid-renderer';
 const THUMBNAIL_SELECTOR  = '.yt-img-shadow';
 const NAME_SELECTOR = '#video-title'
+const LOCAL_STORAGE_KEY = 'videos';
 
 const getVideosIds = (selector) => {
     const nodes = document.querySelectorAll(selector);
@@ -16,12 +17,9 @@ const getVideosIds = (selector) => {
             urls.push(nameNode.href.split('=')[1]);
         }
     });
-    return urls;
+    return { urls };
 }
 
 window.addEventListener('load', () => {
-    chrome.runtime.sendMessage({
-        type: 'VIDEOS_LIST_PLUGIN_DATA', 
-        foundVideos: getVideosIds(VIDEO_CONTAINER_SELECTOR)
-    });
+    chrome.storage.sync.set({'videosIds': getVideosIds(VIDEO_CONTAINER_SELECTOR)});
 }, false);

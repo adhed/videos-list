@@ -16,6 +16,7 @@ const mockedVideos: IVideo[] = [
 const App: React.FC = () => {
   const [selectedVideo, setSelectedVideo] = useState<IVideo | null>(null);
   const [foundVideos, setFoundVideos] = useState<IVideo[]>([]);
+  const [data, setData] = useState();
 
   const getVideo = (id: string): IVideo | null => {
     return foundVideos.find((video: IVideo) => video.id === id) || null;
@@ -30,33 +31,36 @@ const App: React.FC = () => {
   }
 
   useEffect(() => {
-    if (!(window as any).chrome.runtime || !(window as any).chrome.runtime.onMessage) {
+    if (!(window as any).chrome.storage || (window as any).chrome.storage.sync) {
       return;
     }
 
-    (window as any).chrome.runtime.onMessage.addListener((message: IChromeMessage) => {
-      if (message.type === PLUGIN_DATA_MSG) {
-        (async () => {
-          const videos: IVideoDetails[] = await Promise.all(
-            message.foundVideos.map(async (id: string) => await YouTubeApiService.getVideoDetails(id))
-          );
-          const newFoundVideos = videos.map((videoDetails: IVideoDetails) => ({
-            id: videoDetails.id,
-            thumbnail: videoDetails.snippet.thumbnails.default.url,
-            description: videoDetails.snippet.description,
-            name: videoDetails.snippet.title,
-          }));
-      
-          setFoundVideos(newFoundVideos);
-        })();
-      }
+    (window as any).chrome.storage.sync.get(['videosIds'], (ids: string[]) => {
+      alert(ids);
+      console.log('ids', ids);
+      setData(ids);
     });
+
+    // (async () => {
+    //   const videos: IVideoDetails[] = await Promise.all(
+    //     parsedIds.urls.map(async (id: string) => await YouTubeApiService.getVideoDetails(id))
+    //   );
+    //   const newFoundVideos = videos.map((videoDetails: IVideoDetails) => ({
+    //     id: videoDetails.id,
+    //     thumbnail: videoDetails.snippet.thumbnails.default.url,
+    //     description: videoDetails.snippet.description,
+    //     name: videoDetails.snippet.title,
+    //   }));
+  
+    //   setFoundVideos(newFoundVideos);
+    // })();
   })
 
   return (
     <div className="app-container">
       { selectedVideo ? <VideoPanel onClearClick={handleClearClick} data={selectedVideo} /> : null }
       { foundVideos.length ? <VideosList videos={foundVideos} onVideoNameClick={handleVideoSelect} /> : 'Videos list is empty.' }
+      { data } - data
     </div>
   );
 }
