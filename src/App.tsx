@@ -30,20 +30,28 @@ const App: React.FC = () => {
   }
 
   useEffect(() => {
-    (async () => {
-      const videos: IVideoDetails[] = await Promise.all(
-        mockedVideos.map(async (video: IVideo) => await YouTubeApiService.getVideoDetails(video.id))
-      );
-      const newFoundVideos = videos.map((videoDetails: IVideoDetails) => ({
-        id: videoDetails.id,
-        thumbnail: videoDetails.snippet.thumbnails.default.url,
-        description: videoDetails.snippet.description,
-        name: videoDetails.snippet.title,
-      }));
-  
-      setFoundVideos(newFoundVideos);
-    })();
-  }, [])
+    if (!(window as any).chrome.runtime || !(window as any).chrome.runtime.onMessage) {
+      return;
+    }
+
+    (window as any).chrome.runtime.onMessage.addListener((message: IChromeMessage) => {
+      if (message.type === PLUGIN_DATA_MSG) {
+        (async () => {
+          const videos: IVideoDetails[] = await Promise.all(
+            message.foundVideos.map(async (id: string) => await YouTubeApiService.getVideoDetails(id))
+          );
+          const newFoundVideos = videos.map((videoDetails: IVideoDetails) => ({
+            id: videoDetails.id,
+            thumbnail: videoDetails.snippet.thumbnails.default.url,
+            description: videoDetails.snippet.description,
+            name: videoDetails.snippet.title,
+          }));
+      
+          setFoundVideos(newFoundVideos);
+        })();
+      }
+    });
+  })
 
   return (
     <div className="app-container">

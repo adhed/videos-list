@@ -10,10 +10,13 @@ const getVideosIds = (selector) => {
         return null;
     }
 
-    return nodes.forEach((node) => {
+    nodes.forEach((node) => {
         const nameNode = node.querySelector(NAME_SELECTOR);
-        urls.push(nameNode.href.split('=')[1]);
+        if (nameNode) {
+            urls.push(nameNode.href.split('=')[1]);
+        }
     });
+    return urls;
 }
 
 window.addEventListener('load', () => {
@@ -21,5 +24,4 @@ window.addEventListener('load', () => {
         type: 'VIDEOS_LIST_PLUGIN_DATA', 
         foundVideos: getVideosIds(VIDEO_CONTAINER_SELECTOR)
     });
-    alert('send!', getVideosIds(VIDEO_CONTAINER_SELECTOR));
 }, false);
