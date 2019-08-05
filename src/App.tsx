@@ -6,7 +6,6 @@ import { VideosList, VideoPanel } from './components';
 import { IVideo } from './models';
 import { YouTubeApiService } from './services/YouTubeApiService';
 import { IVideoDetails } from './models/IVideoDetails';
-import ReactDOM from 'react-dom';
 
 const App: React.FC = () => {
   const [selectedVideo, setSelectedVideo] = useState<IVideo | null>(null);
@@ -51,13 +50,18 @@ const App: React.FC = () => {
     }
 
     chrome.storage.sync.get(['videosIds'], (message) => {
+      if (!message.videosIds) {
+        return;
+      }
+
       setIsLoading(true);
       const videosIds: string[] = message.videosIds.urls;
 
       (async () => {
         try {
-          fetchVideoDetails(videosIds);
+          await fetchVideoDetails(videosIds);
         } catch(e) {
+          setIsLoading(false);
           alert('There is an error with the request for videos details, sorry.');
         }
       })();

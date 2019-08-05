@@ -6,9 +6,9 @@ export const YouTubeApiService = {
         return fetch(`${YT_API}/videos?part=snippet%2CcontentDetails%2Cstatistics&id=${id}&key=${YT_API_KEY}`)
             .then((response: Response) => {
                 if (!response.ok) {
-                throw new Error(response.statusText)
+                    throw new Error(response.statusText);
                 }
-                return response.json()
+                return response.json();
             })
             .then((data: IVideoDetailsWrapper) => {
                 return data.items[0];
