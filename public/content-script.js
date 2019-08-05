@@ -3,9 +3,9 @@ const THUMBNAIL_SELECTOR  = '.yt-img-shadow';
 const NAME_SELECTOR = '#video-title'
 const LOCAL_STORAGE_KEY = 'videos';
 
-const getVideosIds = (selector) => {
+const getVideos = (selector) => {
     const nodes = document.querySelectorAll(selector);
-    const urls = [];
+    const videos = [];
 
     if (!nodes) {
         return null;
@@ -14,21 +14,24 @@ const getVideosIds = (selector) => {
     nodes.forEach((node) => {
         const nameNode = node.querySelector(NAME_SELECTOR);
         if (nameNode) {
-            urls.push(nameNode.href.split('=')[1]);
+            videos.push({
+                id: nameNode.href.split('=')[1],
+                name: nameNode.title
+            });
         }
     });
-    return { urls };
+    return videos;
 }
 
-const setCurrentVideosIds = () => {
-    chrome.storage.sync.set({'videosIds': getVideosIds(VIDEO_CONTAINER_SELECTOR)});
+const setCurrentVideos = () => {
+    chrome.storage.sync.set({'videos': getVideos(VIDEO_CONTAINER_SELECTOR)});
 }
 
 window.addEventListener('load', () => {
-    setCurrentVideosIds();
+    setCurrentVideos();
 }, false);
 
 window.addEventListener('scroll', () => {
-    setCurrentVideosIds();
+    setCurrentVideos();
 }, false);
 
