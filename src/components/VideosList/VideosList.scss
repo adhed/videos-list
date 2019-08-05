@@ -13,4 +13,8 @@
         text-decoration: underline;
         cursor: pointer;
     }
+
+    &--highlighted {
+        font-weight: bold;
+    }
 }

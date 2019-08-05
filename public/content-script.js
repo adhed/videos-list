@@ -20,6 +20,15 @@ const getVideosIds = (selector) => {
     return { urls };
 }
 
-window.addEventListener('scroll', () => {
+const setCurrentVideosIds = () => {
     chrome.storage.sync.set({'videosIds': getVideosIds(VIDEO_CONTAINER_SELECTOR)});
+}
+
+window.addEventListener('load', () => {
+    setCurrentVideosIds();
 }, false);
+
+window.addEventListener('scroll', () => {
+    setCurrentVideosIds();
+}, false);
+
