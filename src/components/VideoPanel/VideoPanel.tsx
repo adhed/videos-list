@@ -41,7 +41,7 @@ const VideoPanel: React.FC<VideoPanelProps> = (props: VideoPanelProps) => {
         setIsLoading(false);
       }
     })();
-  });
+  }, [props.data.id]);
 
   return (
     <div className="video-panel">
