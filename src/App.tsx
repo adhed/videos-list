@@ -1,3 +1,5 @@
+/*global chrome*/
+
 import React, { useState, useEffect } from 'react';
 import './App.scss';
 import { VideosList, VideoPanel } from './components';
@@ -31,36 +33,33 @@ const App: React.FC = () => {
   }
 
   useEffect(() => {
-    if (!(window as any).chrome.storage || (window as any).chrome.storage.sync) {
+    if (!chrome || !chrome.storage || !chrome.storage.sync) {
       return;
     }
 
-    (window as any).chrome.storage.sync.get(['videosIds'], (ids: string[]) => {
-      alert(ids);
-      console.log('ids', ids);
-      setData(ids);
-    });
+    chrome.storage.sync.get(['videosIds'], (message) => {
+      const videosIds: string[] = message.videosIds.urls;
 
-    // (async () => {
-    //   const videos: IVideoDetails[] = await Promise.all(
-    //     parsedIds.urls.map(async (id: string) => await YouTubeApiService.getVideoDetails(id))
-    //   );
-    //   const newFoundVideos = videos.map((videoDetails: IVideoDetails) => ({
-    //     id: videoDetails.id,
-    //     thumbnail: videoDetails.snippet.thumbnails.default.url,
-    //     description: videoDetails.snippet.description,
-    //     name: videoDetails.snippet.title,
-    //   }));
-  
-    //   setFoundVideos(newFoundVideos);
-    // })();
-  })
+      (async () => {
+        const videos: IVideoDetails[] = await Promise.all(
+          videosIds.map(async (id: string) => await YouTubeApiService.getVideoDetails(id))
+        );
+        const newFoundVideos = videos.map((videoDetails: IVideoDetails) => ({
+          id: videoDetails.id,
+          thumbnail: videoDetails.snippet.thumbnails.default.url,
+          description: videoDetails.snippet.description,
+          name: videoDetails.snippet.title,
+        }));
+    
+        setFoundVideos(newFoundVideos);
+      })();
+    }); 
+  }, [])
 
   return (
     <div className="app-container">
       { selectedVideo ? <VideoPanel onClearClick={handleClearClick} data={selectedVideo} /> : null }
       { foundVideos.length ? <VideosList videos={foundVideos} onVideoNameClick={handleVideoSelect} /> : 'Videos list is empty.' }
-      { data } - data
     </div>
   );
 }

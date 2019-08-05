@@ -1,4 +1,4 @@
-const VIDEO_CONTAINER_SELECTOR  = '.ytd-grid-renderer';
+const VIDEO_CONTAINER_SELECTOR  = 'ytd-grid-video-renderer';
 const THUMBNAIL_SELECTOR  = '.yt-img-shadow';
 const NAME_SELECTOR = '#video-title'
 const LOCAL_STORAGE_KEY = 'videos';
@@ -20,6 +20,6 @@ const getVideosIds = (selector) => {
     return { urls };
 }
 
-window.addEventListener('load', () => {
+window.addEventListener('scroll', () => {
     chrome.storage.sync.set({'videosIds': getVideosIds(VIDEO_CONTAINER_SELECTOR)});
 }, false);
